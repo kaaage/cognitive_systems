@@ -54,18 +54,19 @@
     (add-text-to-exp-window :text (third test) :x 25 :y 150 :width 250)
     (proc-display :clear t)
 
-
     (setf *response-time* nil)
-
     (setf *response* nil)
-
 
     (let ((start-time (get-time)))
       (run 30 :real-time t)
       (setf *response-time* (if *response-time*
                                 (- *response-time* start-time)
                               30000)))
-
+    
+    ;; read sentence, 
+    ;; request declarative memory, 
+    ;; compare chunck 'comprehend-sentence',
+    ;; press button
 
     (list (first test) (/ *response-time* 1000.0)
           (string-equal *response* (second test)))))
@@ -145,7 +146,6 @@
 (chunk-type comprehend-sentence agent action object purpose word state)
 
 (chunk-type meaning word)
-
 
 (add-dm
     (painter ISA meaning word "painter")
@@ -274,6 +274,74 @@
        ISA         comprehend-sentence
        purpose     "test")
 
+(P respond-to-sentence-true
+    =goal>
+       ISA         comprehend-sentence
+       agent  =agent
+       action =action
+       object =object
+       purpose     "test-respond"
+       state       "sentence-complete"
+    =retrieval>
+       ISA         comprehend-sentence
+       agent    =agent
+       action   =action
+       object   =object
+       purpose     "study"
+    ==>
+    -visual>
+    +manual>
+      ISA press-key
+      key "k"
+    +goal>
+       ISA         comprehend-sentence
+       purpose     "test"
+  )
+
+(P respond-to-sentence-false
+    =goal>
+       ISA         comprehend-sentence
+       agent  =agent
+       action =action
+       object =object
+       purpose     "test-respond"
+       state       "sentence-complete"
+    =retrieval>
+      ISA         comprehend-sentence
+       - agent  =agent
+       action   =action
+       - object =object
+       purpose     "study"
+    ==>
+    -visual>
+    +manual>
+      ISA press-key
+      key "d"
+    +goal>
+       ISA         comprehend-sentence
+       purpose     "test"
+  )
+
+; (P respond-to-sentence-false
+;     =goal>
+;        ISA         comprehend-sentence
+;        agent  =agent
+;        action =action
+;        object =object
+;        purpose     "test-respond"
+;        state       "sentence-complete"
+;     ?retrieval>
+;        state error
+;     ==>
+;     -visual>
+;     +manual>
+;       ISA press-key
+;       key "d"
+;     +goal>
+;        ISA         comprehend-sentence
+;        purpose     "test"
+;   )
+
 
 (P process-first-noun
     =goal>
@@ -304,7 +372,7 @@
       object =agent
       agent   nil
       word    nil
-      state   "find"      
+      state   "find"
   )
 
 (P process-last-word-agent
@@ -367,6 +435,25 @@
     +goal>
        ISA         comprehend-sentence
        purpose     "study")
+
+(P test-sentence-read-wait
+    =goal>
+       ISA         comprehend-sentence
+       state       "sentence-complete"
+       agent       =agent
+       action      =action
+       object      =object
+       purpose     "test"
+  ==>
+    -visual>
+    +goal>
+       ISA         comprehend-sentence
+       state       "sentence-complete"
+       agent       =agent
+       action      =action
+       object      =object
+       purpose     "test-respond"
+  )
 
 
 (set-visloc-default isa visual-location :attended new screen-x lowest)
