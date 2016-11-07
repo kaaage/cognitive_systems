@@ -288,6 +288,8 @@
        action   =action
        object   =object
        purpose     "study"
+    ; ?retrieval>
+    ;     buffer  full    
     ==>
     -visual>
     +manual>
@@ -306,12 +308,14 @@
        object =object
        purpose     "test-respond"
        state       "sentence-complete"
-    =retrieval>
-      ISA         comprehend-sentence
-       - agent  =agent
-       action   =action
-       - object =object
-       purpose     "study"
+  ?retrieval>
+       state error
+  ; =retrieval>
+  ;     ISA         comprehend-sentence
+  ;      - agent  =agent
+  ;      action   =action
+  ;      - object =object
+  ;      purpose     "study"
     ==>
     -visual>
     +manual>
@@ -453,7 +457,13 @@
        action      =action
        object      =object
        purpose     "test-respond"
-  )
+    +retrieval>
+       ISA         comprehend-sentence
+       agent    =agent
+       action   =action
+       object   =object
+       purpose     "study"
+)
 
 
 (set-visloc-default isa visual-location :attended new screen-x lowest)
