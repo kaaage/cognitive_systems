@@ -2,7 +2,7 @@
 (defvar *response-time* nil)
 
 (defconstant *unit4-exp-data* '(2.25 2.8  2.3  2.75
-                                2.55 2.95 2.55 2.95))
+                                2.55 2.95 2.55 2.95 2.69 2.16))
 
 (defvar *demo4-study-set*
    '("The painter visited the missionary"
