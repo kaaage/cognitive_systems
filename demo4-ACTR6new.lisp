@@ -12,7 +12,8 @@
      "The missionary shot the sailor"
      "The cannibal questioned the painter"
      "The missionary was accused by the painter"
-     "The cannibal was feared by the missionary"))
+     "The cannibal was feared by the missionary"
+     "The cannibal was accused by the sailor"))
 
 (defvar *demo4-test-set*
    '((1 "k" "The painter visited the missionary")
@@ -22,7 +23,9 @@
      (5 "d" "The sailor shot the missionary")
      (6 "d" "The cannibal was questioned by the painter")
      (7 "d" "The missionary accused the painter")
-     (8 "d" "The missionary was feared by the cannibal")))
+     (8 "d" "The missionary was feared by the cannibal")
+     (9 "d" "The sailor chased the painter")
+     (10 "k" "The cannibal was accused by the sailor")))
 
 (defun study-sentence (text time)
   (if *actr-enabled-p*
