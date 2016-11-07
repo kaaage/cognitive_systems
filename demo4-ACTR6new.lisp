@@ -65,12 +65,6 @@
       (setf *response-time* (if *response-time*
                                 (- *response-time* start-time)
                               30000)))
-    
-    ;; read sentence, 
-    ;; request declarative memory, 
-    ;; compare chunck 'comprehend-sentence',
-    ;; press button
-
     (list (first test) (/ *response-time* 1000.0)
           (string-equal *response* (second test)))))
 
@@ -253,17 +247,6 @@
        word        nil)
 
 
-; (P skip-by
-;     =goal>
-;        ISA         comprehend-sentence
-;        word        "by"
-;        state       "read"
-;   ==>
-;     =goal>
-;        state       "find"
-;        word        nil)
-
-
 (P respond-to-test
     =goal>
        ISA         comprehend-sentence
@@ -276,79 +259,6 @@
    +goal>
        ISA         comprehend-sentence
        purpose     "test")
-
-(P respond-to-sentence-true
-    =goal>
-       ISA         comprehend-sentence
-       agent  =agent
-       action =action
-       object =object
-       purpose     "test-respond"
-       state       "sentence-complete"
-    =retrieval>
-       ISA         comprehend-sentence
-       agent    =agent
-       action   =action
-       object   =object
-       purpose     "study"
-    ; ?retrieval>
-    ;     buffer  full    
-    ==>
-    -visual>
-    +manual>
-      ISA press-key
-      key "k"
-    +goal>
-       ISA         comprehend-sentence
-       purpose     "test"
-  )
-
-(P respond-to-sentence-false
-    =goal>
-       ISA         comprehend-sentence
-       agent  =agent
-       action =action
-       object =object
-       purpose     "test-respond"
-       state       "sentence-complete"
-  ?retrieval>
-       state error
-  ; =retrieval>
-  ;     ISA         comprehend-sentence
-  ;      - agent  =agent
-  ;      action   =action
-  ;      - object =object
-  ;      purpose     "study"
-    ==>
-    -visual>
-    +manual>
-      ISA press-key
-      key "d"
-    +goal>
-       ISA         comprehend-sentence
-       purpose     "test"
-  )
-
-; (P respond-to-sentence-false
-;     =goal>
-;        ISA         comprehend-sentence
-;        agent  =agent
-;        action =action
-;        object =object
-;        purpose     "test-respond"
-;        state       "sentence-complete"
-;     ?retrieval>
-;        state error
-;     ==>
-;     -visual>
-;     +manual>
-;       ISA press-key
-;       key "d"
-;     +goal>
-;        ISA         comprehend-sentence
-;        purpose     "test"
-;   )
-
 
 (P process-first-noun
     =goal>
@@ -367,6 +277,8 @@
        word        nil
        state       "find")
 
+;production when the word "by" is read to recognize passive voice
+;changes the object to the agent word and sets the agent back to nil
 (P process-by
     =goal>
        ISA         comprehend-sentence
@@ -382,6 +294,8 @@
       state   "find"
   )
 
+;added for passive voice sentences 
+;when the agent is the last word
 (P process-last-word-agent
     =goal>
        ISA         comprehend-sentence
@@ -396,7 +310,7 @@
   ==>
     =goal>
        state       "sentence-complete"
-       agent      =retrieval)
+       agent       =retrieval)
 
 (P process-verb
     =goal>
@@ -443,6 +357,8 @@
        ISA         comprehend-sentence
        purpose     "study")
 
+;after reading sentence in test purpose, set purpose to test-respond
+;add sentence chunk to retrieval buffer
 (P test-sentence-read-wait
     =goal>
        ISA         comprehend-sentence
@@ -462,11 +378,59 @@
        purpose     "test-respond"
     +retrieval>
        ISA         comprehend-sentence
-       agent    =agent
-       action   =action
-       object   =object
+       agent       =agent
+       action      =action
+       object      =object
        purpose     "study"
 )
+
+;press "k" if the current sentence from test
+;was found in the retrieval-buffer
+(P respond-to-sentence-true
+    =goal>
+       ISA         comprehend-sentence
+       agent       =agent
+       action      =action
+       object      =object
+       purpose     "test-respond"
+       state       "sentence-complete"
+    =retrieval>
+       ISA         comprehend-sentence
+       agent       =agent
+       action      =action
+       object      =object
+       purpose     "study"   
+  ==>
+    -visual>
+    +manual>
+      ISA press-key
+      key "k"
+    +goal>
+       ISA         comprehend-sentence
+       purpose     "test"
+  )
+
+;press "d" when current sentence from test
+;wasn't found in the retrieval buffer
+(P respond-to-sentence-false
+    =goal>
+       ISA         comprehend-sentence
+       agent       =agent
+       action      =action
+       object      =object
+       purpose     "test-respond"
+       state       "sentence-complete"
+    ?retrieval>
+       state error
+  ==>
+    -visual>
+    +manual>
+      ISA press-key
+      key "d"
+    +goal>
+       ISA         comprehend-sentence
+       purpose     "test"
+  )
 
 
 (set-visloc-default isa visual-location :attended new screen-x lowest)
