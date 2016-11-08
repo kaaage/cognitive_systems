@@ -137,7 +137,7 @@
 
 (define-model comPro)
 
-
+;trace-detail changed to 'low' short output
 (sgp :v t :esc t :lf 0.15 :ga 0.0 :show-focus t :trace-detail low)
 
 (chunk-type comprehend-sentence agent action object purpose word state)
@@ -359,6 +359,7 @@
 
 ;after reading sentence in test purpose, set purpose to test-respond
 ;add sentence chunk to retrieval buffer
+;request declarative module
 (P test-sentence-read-wait
     =goal>
        ISA         comprehend-sentence
